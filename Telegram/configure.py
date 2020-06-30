@@ -22,7 +22,7 @@ def error(message):
     print('[ERROR] ' + message)
     finish(1)
 
-if sys.platform == 'win32' and not 'COMSPEC' in os.environ:
+if sys.platform == 'win32' and 'COMSPEC' not in os.environ:
     error('COMSPEC environment variable is not set.')
 
 executePath = os.getcwd()

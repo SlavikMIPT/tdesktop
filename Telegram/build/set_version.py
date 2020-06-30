@@ -12,7 +12,7 @@ def finish(code):
     os.chdir(executePath)
     sys.exit(code)
 
-if sys.platform == 'win32' and not 'COMSPEC' in os.environ:
+if sys.platform == 'win32' and 'COMSPEC' not in os.environ:
     print('[ERROR] COMSPEC environment variable is not set.')
     finish(1)
 
@@ -73,43 +73,43 @@ else:
 #def replaceInFile(path, replaces):
 
 def checkChangelog():
-  global scriptPath, versionStr, versionStrSmall
+    global scriptPath, versionStr, versionStrSmall
 
-  count = 0
-  with open(scriptPath + '/../../changelog.txt', 'r') as f:
-    for line in f:
-      if line.startswith(versionStr + ' ') or line.startswith(versionStrSmall + ' '):
-        count = count + 1
-  if count == 0:
-    print('Changelog entry not found!')
-    finish(1)
-  elif count != 1:
-    print('Wrong changelog entries count found: ' + count)
-    finish(1)
+    count = 0
+    with open(scriptPath + '/../../changelog.txt', 'r') as f:
+        for line in f:
+            if line.startswith(versionStr + ' ') or line.startswith(versionStrSmall + ' '):
+                count += 1
+    if count == 0:
+      print('Changelog entry not found!')
+      finish(1)
+    elif count != 1:
+      print('Wrong changelog entries count found: ' + count)
+      finish(1)
 
 checkChangelog()
 
 def replaceInFile(path, replacements):
-  content = ''
-  foundReplacements = {}
-  updated = False
-  with open(path, 'r') as f:
-    for line in f:
-      for replacement in replacements:
-        if re.search(replacement[0], line):
-          changed = re.sub(replacement[0], replacement[1], line)
-          if changed != line:
-            line = changed
-            updated = True
-          foundReplacements[replacement[0]] = True
-      content = content + line
-  for replacement in replacements:
-    if not replacement[0] in foundReplacements:
-      print('Could not find "' + replacement[0] + '" in "' + path + '".')
-      finish(1)
-  if updated:
-    with open(path, 'w') as f:
-      f.write(content)
+    content = ''
+    foundReplacements = {}
+    updated = False
+    with open(path, 'r') as f:
+        for line in f:
+            for replacement in replacements:
+              if re.search(replacement[0], line):
+                changed = re.sub(replacement[0], replacement[1], line)
+                if changed != line:
+                  line = changed
+                  updated = True
+                foundReplacements[replacement[0]] = True
+            content += line
+    for replacement in replacements:
+        if replacement[0] not in foundReplacements:
+            print('Could not find "' + replacement[0] + '" in "' + path + '".')
+            finish(1)
+    if updated:
+      with open(path, 'w') as f:
+        f.write(content)
 
 print('Patching build/version...')
 replaceInFile(scriptPath + '/version', [
