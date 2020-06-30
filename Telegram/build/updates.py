@@ -122,11 +122,10 @@ if building:
                 elif parts[0] == 'Status:':
                     if parts[1] == 'in':
                         print('In progress.')
-                        statusFound = True
                     else:
                         requestStatus = parts[1]
                         print('Status: ' + requestStatus)
-                        statusFound = True
+                    statusFound = True
         if not statusFound:
             print('Nothing: ' + lines)
     if requestStatus != 'success':
@@ -238,7 +237,7 @@ caption = ''
 with open(commandPath, 'r') as f:
     for line in f:
         if readingCaption:
-            caption = caption + line
+            caption += line
         elif line.startswith('caption: '):
             readingCaption = True
             caption = line[len('caption: '):]
